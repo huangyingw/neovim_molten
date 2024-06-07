@@ -1,0 +1,8 @@
+version: '3'
+services:
+  neovim:
+    build: .
+    volumes:
+      - ~/.config/nvim:/root/.config/nvim
+      - ./test.md:/root/test.md
+    tty: true
