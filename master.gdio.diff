@@ -1,0 +1,65 @@
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+--- /dev/null
++++ ./Dockerfile
+@@ -0,0 +1,21 @@
++FROM ubuntu:20.04
++
++# 安装必要的工具
++RUN apt-get update && \
++        apt-get install -y \
++        neovim \
++        git \
++        curl \
++        && apt-get clean
++
++# 安装 lazy.nvim 插件管理器
++        RUN git clone --depth 1 https://github.com/folke/lazy.nvim \
++            ~/.local/share/nvim/site/pack/lazy/start/lazy.nvim
++
++# 设置Neovim配置目录
++RUN mkdir -p ~/.config/nvim
++
++# 拷贝本地的init.lua文件到容器中
++COPY init.lua /root/.config/nvim/init.lua
++
++CMD ["nvim"]
+diff --git a/docker-compose.yml b/docker-compose.yml
+new file mode 100644
+--- /dev/null
++++ ./docker-compose.yml
+@@ -0,0 +1,8 @@
++version: '3'
++services:
++  neovim:
++    build: .
++    volumes:
++      - ~/.config/nvim:/root/.config/nvim
++      - ./test.md:/root/test.md
++    tty: true
+diff --git a/init.lua b/init.lua
+new file mode 100644
+--- /dev/null
++++ ./init.lua
+@@ -0,0 +1,11 @@
++-- 设置 runtimepath
++vim.opt.rtp:prepend("~/.local/share/nvim/site/pack/lazy/start/lazy.nvim")
++
++-- 配置 lazy.nvim
++require('lazy').setup({
++    {"benlubas/molten-nvim"},
++    {"3rd/image.nvim"},
++    {"willothy/wezterm.nvim"},
++    {"nvim-lua/plenary.nvim"}
++})
++
+diff --git a/test.md b/test.md
+new file mode 100644
+--- /dev/null
++++ ./test.md
+@@ -0,0 +1,5 @@
++# Test Molten
++
++This is a test for Molten.
++
++![image](https://example.com/image.png)
